@@ -5,6 +5,31 @@ function getRecepient(senderName) {
     return document.querySelector("iframe:not([name=" + senderName + "])");
 }
 
+function addMsgToStorage(data) {
+    "use strict";
+    // Добавляем данные в sessionStorage
+
+    var msg = sessionStorage.getItem("msg");
+
+    msg = JSON.parse(msg);
+
+    // Проверяем, что сообщения этого псевдонима есть в хранилище
+
+    if (!msg.hasOwnProperty(data.alias)) {
+        msg[data.alias] = [];
+    }
+
+    // Добавляем сообщения, отправленные этим псевдонимом
+
+    msg[data.alias].push(data.msg);
+
+    msg = JSON.stringify(msg);
+
+    // Добавляем сообщение в sessionStorage
+
+    sessionStorage.setItem("msg", msg);
+}
+
 function sendMessage(sender) {
     "use strict";
     // Отправка сообщения
@@ -31,6 +56,10 @@ function sendMessage(sender) {
         // Отправка сериализованных данных получателю
 
         win.postMessage(JSON.stringify(data), recepient.src);
+
+        // Добавляем данные в sessionStorage
+
+        addMsgToStorage(data);
     } else {
         alert("Псевдоним не может быть пустым");
     }
@@ -42,7 +71,8 @@ function showMessage(senderName, data) {
 
     var recepient = getRecepient(senderName),
         doc = recepient.contentWindow.document,
-        textarea = doc.getElementById("chat"),
+        div = doc.getElementById("chat"),
+        p = doc.createElement("p"),
         text;
 
     // Десереализация сообщения
@@ -51,9 +81,12 @@ function showMessage(senderName, data) {
 
     // Установка значения
 
-    text = data.alias + ": " + data.msg + "\r\n";
+    text = data.alias + ": " + data.msg;
+    p.innerHTML = text;
 
-    textarea.value += text;
+    // Добавление абзаца
+
+    div.appendChild(p);
 }
 
 function setEvents(iframe) {
@@ -115,5 +148,6 @@ function onLoad() {
 window.onload = function () {
     "use strict";
 
+    sessionStorage.setItem("msg", "{}");
     onLoad();
 };
