@@ -81,6 +81,7 @@ function checkAlias(msg) {
 
     for (i = 0, len = aliases.length; i < len; i += 1) {
         oldSubStr = aliases[i];
+
         // Если в тексте есть алиас
 
         if (msg.indexOf(oldSubStr) > -1) {
@@ -88,7 +89,11 @@ function checkAlias(msg) {
 
             newSubStr = '<span class="alias">' + oldSubStr + "</span>";
 
-            // используем регулярные выражения, чтобы заменить все значения в строке
+            // Экранируем спец символы
+
+            oldSubStr = oldSubStr.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+            //  Создаем регулярное выражение, чтобы заменить все значения в строке
 
             oldSubStr = new RegExp(oldSubStr, "g");
             msg = msg.replace(oldSubStr, newSubStr);
@@ -223,7 +228,7 @@ function setEvents(iframe) {
 
 function onLoad() {
     "use strict";
-    // Получение фреймов для установки событий
+    // Получение фреймов для установки событий в каждом
 
     var iframes = document.getElementsByTagName("iframe"),
         len = iframes.length,
