@@ -85,8 +85,13 @@ function generateMessage(msg) {
         oldSubStr = aliases[i];
 
         if (msg.indexOf(oldSubStr) > -1) {
+            // Генерация новый подстроки
+
             newSubStr = '<span class="alias">' + oldSubStr + "</span>";
 
+            // используем регулярные выражения, чтобы заменить все значения в строке
+
+            oldSubStr = new RegExp(oldSubStr, "g");
             msg = msg.replace(oldSubStr, newSubStr);
         }
     }
