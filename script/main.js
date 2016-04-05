@@ -65,36 +65,23 @@ function sendMessage(sender) {
     }
 }
 
-function generateMessage(msg) {
+function checkAlias(msg) {
     "use strict";
-    // Генерация сообщения для вставки в dom
+    // Проверка алиасов в сообщении
 
     var store = sessionStorage.getItem("msg"),
-
-        // Коды смайлов
-
-        smiles = {
-            sad: [/:-\(/g, /:\(/g, /=\(/g],
-            cry: [/:_\(/g, /:'\(/g],
-            smile: [/:-\)/g, /:\)/g, /=]/g],
-            wink: [/;-\)/g, /;\)/g],
-            happy: [/=\)/g, /<3/g]
-        },
         oldSubStr,
         newSubStr,
         aliases,
-        smile,
-        key,
         len,
         i;
 
     store = JSON.parse(store);
     aliases = Object.keys(store);
 
-    // Проверяем наличие псевдонимов в сообщении
-
     for (i = 0, len = aliases.length; i < len; i += 1) {
         oldSubStr = aliases[i];
+        // Если в тексте есть алиас
 
         if (msg.indexOf(oldSubStr) > -1) {
             // Генерация новый подстроки
@@ -108,22 +95,54 @@ function generateMessage(msg) {
         }
     }
 
-    // Проверяем наличие смайлов в сообщении
+    return msg;
+}
+
+function checkSmile(msg) {
+    "use strict";
+    // Проверка смайлов в сообщении
+
+    // Основные смайлы
+
+    var smiles = {
+        sad: [/:-\(/g, /:\(/g, /=\(/g],
+        cry: [/:_\(/g, /:'\(/g],
+        smile: [/:-\)/g, /:\)/g, /=]/g],
+        wink: [/;-\)/g, /;\)/g],
+        happy: [/=\)/g, /<3/g]
+    },
+    newSubStr,
+    smile,
+    key,
+    len,
+    i;
 
     for (key in smiles) {
         smile = smiles[key];
 
         for (i = 0, len = smile.length; i < len; i += 1) {
-            oldSubStr = smile[i];
+            // Если в тексте есть смайл
 
-            if (msg.match(oldSubStr)) {
+            if (msg.match(smile[i])) {
                 // Генерация смайла
 
                 newSubStr = '<img src="../image/smile/' + key + '.ico" width="16" height="16" alt="' + key + '">';
-                msg = msg.replace(oldSubStr, newSubStr);
+                msg = msg.replace(smile[i], newSubStr);
             }
         }
     }
+
+    return msg;
+}
+
+function generateMessage(msg) {
+    "use strict";
+    // Генерация сообщения для вставки в dom
+
+    // Проверки на наличие алиасов и смайлов
+
+    msg = checkAlias(msg);
+    msg = checkSmile(msg);
 
     return msg;
 }
@@ -191,7 +210,7 @@ function setEvents(iframe) {
         if (key === 13) {
             // Если не нажат shift, то просто перенос
 
-            if (evt.shiftKey === false) {
+            if (evt.shiftKey === false && textarea.value) {
                 sendMessage(iframe);
             }
         }
