@@ -174,6 +174,19 @@ function showMessage(senderName, data) {
     div.appendChild(p);
 }
 
+function onKeyDown(e, iframe, textarea) {
+	var evt = e || window.event,
+        key = evt.charCode || evt.keyCode;
+
+    if (key === 13) {
+        // Если не нажат shift, то просто перенос
+
+        if (evt.shiftKey === false && textarea.value) {
+            sendMessage(iframe);
+        }
+    }
+}
+
 function setEvents(iframe) {
     "use strict";
     // Установка событий элементам фрейма
@@ -204,16 +217,7 @@ function setEvents(iframe) {
     // Enter на поле сообщения
 
     textarea.onkeydown = function (e) {
-        var evt = e || window.event,
-            key = evt.charCode || evt.keyCode;
-
-        if (key === 13) {
-            // Если не нажат shift, то просто перенос
-
-            if (evt.shiftKey === false && textarea.value) {
-                sendMessage(iframe);
-            }
-        }
+        onKeyDown(e, iframe, textarea);
     };
 }
 
