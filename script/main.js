@@ -70,9 +70,21 @@ function generateMessage(msg) {
     // Генерация сообщения для вставки в dom
 
     var store = sessionStorage.getItem("msg"),
+
+        // Коды смайлов
+
+        smiles = {
+            sad: [/:-\(/g, /:\(/g, /=\(/g],
+            cry: [/:_\(/g, /:'\(/g],
+            smile: [/:-\)/g, /:\)/g, /=]/g],
+            wink: [/;-\)/g, /;\)/g],
+            happy: [/=\)/g, /<3/g]
+        },
         oldSubStr,
         newSubStr,
         aliases,
+        smile,
+        key,
         len,
         i;
 
@@ -93,6 +105,23 @@ function generateMessage(msg) {
 
             oldSubStr = new RegExp(oldSubStr, "g");
             msg = msg.replace(oldSubStr, newSubStr);
+        }
+    }
+
+    // Проверяем наличие смайлов в сообщении
+
+    for (key in smiles) {
+        smile = smiles[key];
+
+        for (i = 0, len = smile.length; i < len; i += 1) {
+            oldSubStr = smile[i];
+
+            if (msg.match(oldSubStr)) {
+                // Генерация смайла
+
+                newSubStr = '<img src="../image/smile/' + key + '.ico" width="16" height="16" alt="' + key + '">';
+                msg = msg.replace(oldSubStr, newSubStr);
+            }
         }
     }
 
