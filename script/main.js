@@ -19,9 +19,9 @@ function addMsgToStorage(data) {
         msg[data.alias] = [];
     }
 
-    // Добавляем сообщения, отправленные этим псевдонимом
-
     msg[data.alias].push(data.msg);
+
+    // Сериализация json
 
     msg = JSON.stringify(msg);
 
@@ -53,16 +53,45 @@ function sendMessage(sender) {
             msg: msg
         };
 
-        // Отправка сериализованных данных получателю
-
-        win.postMessage(JSON.stringify(data), recepient.src);
-
         // Добавляем данные в sessionStorage
 
         addMsgToStorage(data);
+
+        // Отправка сериализованных данных получателю
+
+        win.postMessage(JSON.stringify(data), recepient.src);
     } else {
         alert("Псевдоним не может быть пустым");
     }
+}
+
+function generateMessage(msg) {
+    "use strict";
+    // Генерация сообщения для вставки в dom
+
+    var store = sessionStorage.getItem("msg"),
+        oldSubStr,
+        newSubStr,
+        aliases,
+        len,
+        i;
+
+    store = JSON.parse(store);
+    aliases = Object.keys(store);
+
+    // Проверяем наличие псевдонимов в сообщении
+
+    for (i = 0, len = aliases.length; i < len; i += 1) {
+        oldSubStr = aliases[i];
+
+        if (msg.indexOf(oldSubStr) > -1) {
+            newSubStr = '<span class="alias">' + oldSubStr + "</span>";
+
+            msg = msg.replace(oldSubStr, newSubStr);
+        }
+    }
+
+    return msg;
 }
 
 function showMessage(senderName, data) {
@@ -75,13 +104,16 @@ function showMessage(senderName, data) {
         p = doc.createElement("p"),
         text;
 
-    // Десереализация сообщения
+    // Десереализация входного сообщения
 
     data = JSON.parse(data);
 
+    // Генерация сообщения для вставки в dom
+
+    text = data.alias + ": " + generateMessage(data.msg);
+
     // Установка значения
 
-    text = data.alias + ": " + data.msg;
     p.innerHTML = text;
 
     // Добавление абзаца
