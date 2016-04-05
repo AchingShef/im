@@ -2,7 +2,7 @@ function getRecepient(senderName) {
     "use strict";
     // Получение фрейма-получателя сообщения
 
-    return document.querySelector("iframe:not([name=" + senderName + "])");
+    return $("iframe:not([name=" + senderName + "])")[0];
 }
 
 function addMsgToStorage(data) {
@@ -36,8 +36,8 @@ function sendMessage(sender) {
 
     var recepient = getRecepient(sender.name),
         win = sender.contentWindow,
-        doc = win.document,
-        alias = doc.getElementById("alias").value,
+        doc = $(win.document),
+        alias = doc.find("#alias").val(),
         textarea,
         data,
         msg;
@@ -45,9 +45,11 @@ function sendMessage(sender) {
     // Если псевдоним не пустой
 
     if (alias) {
-        textarea = doc.getElementById("message");
-        msg = textarea.value;
-        textarea.value = "";
+        textarea = doc.find("#message");
+        msg = textarea.val();
+
+        textarea.val("");
+
         data = {
             alias: alias,
             msg: msg
@@ -157,9 +159,8 @@ function showMessage(senderName, data) {
     // Отрисовка сообщения
 
     var recepient = getRecepient(senderName),
-        doc = recepient.contentWindow.document,
-        div = doc.getElementById("chat"),
-        p = doc.createElement("p"),
+        doc = $(recepient.contentWindow.document),
+        div = doc.find("#chat"),
         text;
 
     // Десереализация входного сообщения
@@ -170,23 +171,16 @@ function showMessage(senderName, data) {
 
     text = data.alias + ": " + generateMessage(data.msg);
 
-    // Установка значения
+    // добавляем абзац
 
-    p.innerHTML = text;
-
-    // Добавление абзаца
-
-    div.appendChild(p);
+    div.append("<p>" + text + "</p>");
 }
 
-function onKeyDown(e, iframe, textarea) {
-	var evt = e || window.event,
-        key = evt.charCode || evt.keyCode;
-
-    if (key === 13) {
+function onKeyPress(e, iframe, textarea) {
+    if (e.keyCode === 13) {
         // Если не нажат shift, то просто перенос
 
-        if (evt.shiftKey === false && textarea.value) {
+        if (e.shiftKey === false && textarea.val().length > 0) {
             sendMessage(iframe);
         }
     }
@@ -197,33 +191,27 @@ function setEvents(iframe) {
     // Установка событий элементам фрейма
 
     var win = iframe.contentWindow,
-        doc = win.document,
-        btn = doc.getElementById("submit"),
-        textarea = doc.getElementById("message");
+        doc = $(win.document),
+        btn = doc.find("#submit"),
+        textarea = doc.find("#message");
 
     // Получение сообщения фреймом
 
-    if (win.addEventListener) {
-        win.addEventListener("message", function (e) {
-            showMessage(iframe.name, e.data);
-        });
-    } else {
-        win.attachEvent("onmessage", function (e) {
-            showMessage(iframe.name, e.data);
-        });
-    }
+    win.addEventListener("message", function (e) {
+        showMessage(iframe.name, e.data);
+    });
 
     // Клик по кнопке "отправить"
 
-    btn.onclick = function (e) {
+    btn.on("click", function () {
         sendMessage(iframe);
-    };
+    });
 
     // Enter на поле сообщения
 
-    textarea.onkeydown = function (e) {
-        onKeyDown(e, iframe, textarea);
-    };
+    textarea.on("keypress", function (e) {
+        onKeyPress(e, iframe, textarea);
+    });
 }
 
 function onLoad() {
