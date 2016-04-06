@@ -135,7 +135,6 @@ Controller.prototype.generateMessage = function (msg) {
             len,
             i;
 
-        data = JSON.parse(data);
         aliases = Object.keys(data);
 
         for (i = 0, len = aliases.length; i < len; i += 1) {

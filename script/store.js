@@ -11,8 +11,6 @@ Store.prototype.setData = function (data) {
 
     var msg = this.getData();
 
-    msg = JSON.parse(msg);
-
     // Проверяем, что сообщения этого псевдонима есть в хранилище
 
     if (!msg.hasOwnProperty(data.alias)) {
@@ -33,7 +31,7 @@ Store.prototype.setData = function (data) {
 Store.prototype.getData = function () {
     "use strict";
 
-    return this.data.getItem("msg");
+    return JSON.parse(this.data.getItem("msg"));
 };
 
 Store.prototype.clearStore = function () {
