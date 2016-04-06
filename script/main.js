@@ -128,14 +128,10 @@ function checkSmile(msg) {
         smile = smiles[key];
 
         for (i = 0, len = smile.length; i < len; i += 1) {
-            // Если в тексте есть смайл
+            // Если в тексте есть смайл, то генерим картинку
 
-            if (msg.match(smile[i])) {
-                // Генерация смайла
-
-                newSubStr = '<img src="../image/smile/' + key + '.ico" width="16" height="16" alt="' + key + '">';
-                msg = msg.replace(smile[i], newSubStr);
-            }
+            newSubStr = '<img src="../image/smile/' + key + '.ico" width="16" height="16" alt="' + key + '">';
+            msg = msg.replace(smile[i], newSubStr);
         }
     }
 
