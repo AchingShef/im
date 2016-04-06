@@ -1,5 +1,58 @@
 function Controller() {
     "use strict";
+
+    var scope = this;
+
+    function onKeyPress(e, iframe, textarea) {
+        if (e.keyCode === 13) {
+        // Если не нажат shift, то просто перенос
+
+            if (e.shiftKey === false && textarea.val().length > 0) {
+                scope.sendMessage(iframe);
+            }
+        }
+    }
+
+    function setEvents(iframe) {
+        // Установка событий элементам фрейма
+
+        var win = iframe.contentWindow,
+            doc = $(win.document),
+            btn = doc.find("#submit"),
+            textarea = doc.find("#message");
+
+        // Получение сообщения фреймом
+
+        win.addEventListener("message", function (e) {
+            // Десереализация входного сообщения
+
+            var data = JSON.parse(e.data),
+
+                // Генерация сообщения для вставки в dom
+
+                text = data.alias + ": " + scope.generateMessage(data.msg);
+
+            debugger;
+
+            APP.view.addMessage(iframe.name, text);
+        });
+
+        // Клик по кнопке "отправить"
+
+        btn.on("click", function () {
+            scope.sendMessage(iframe);
+        });
+
+    // Enter на поле сообщения
+
+        textarea.on("keypress", function (e) {
+            onKeyPress(e, iframe, textarea);
+        });
+    }
+
+    APP.view.iframes.each(function (index, value) {
+        setEvents.call(scope, value);
+    });
 }
 
 Controller.prototype.sendMessage = function (sender) {
