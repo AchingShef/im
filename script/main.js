@@ -5,31 +5,6 @@ function getRecepient(senderName) {
     return $("iframe:not([name=" + senderName + "])")[0];
 }
 
-function addMsgToStorage(data) {
-    "use strict";
-    // Добавляем данные в sessionStorage
-
-    var msg = sessionStorage.getItem("msg");
-
-    msg = JSON.parse(msg);
-
-    // Проверяем, что сообщения этого псевдонима есть в хранилище
-
-    if (!msg.hasOwnProperty(data.alias)) {
-        msg[data.alias] = [];
-    }
-
-    msg[data.alias].push(data.msg);
-
-    // Сериализация json
-
-    msg = JSON.stringify(msg);
-
-    // Добавляем сообщение в sessionStorage
-
-    sessionStorage.setItem("msg", msg);
-}
-
 function sendMessage(sender) {
     "use strict";
     // Отправка сообщения
@@ -55,9 +30,9 @@ function sendMessage(sender) {
             msg: msg
         };
 
-        // Добавляем данные в sessionStorage
+        // Добавляем данные в sхранилище
 
-        addMsgToStorage(data);
+        store.setData(data);
 
         // Отправка сериализованных данных получателю
 
@@ -71,15 +46,15 @@ function checkAlias(msg) {
     "use strict";
     // Проверка алиасов в сообщении
 
-    var store = sessionStorage.getItem("msg"),
+    var data = store.getData("msg"),
         oldSubStr,
         newSubStr,
         aliases,
         len,
         i;
 
-    store = JSON.parse(store);
-    aliases = Object.keys(store);
+    data = JSON.parse(data);
+    aliases = Object.keys(data);
 
     for (i = 0, len = aliases.length; i < len; i += 1) {
         oldSubStr = aliases[i];
@@ -226,6 +201,6 @@ function onLoad() {
 window.onload = function () {
     "use strict";
 
-    sessionStorage.setItem("msg", "{}");
+    store.clearStore();
     onLoad();
 };
