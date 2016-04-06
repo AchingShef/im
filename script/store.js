@@ -2,12 +2,14 @@ function Store() {
     "use strict";
 
     this.data = sessionStorage;
+
+    this.clearStore();
 }
 
 Store.prototype.setData = function (data) {
     "use strict";
 
-    var msg = this.getData("msg");
+    var msg = this.getData();
 
     msg = JSON.parse(msg);
 
@@ -28,14 +30,10 @@ Store.prototype.setData = function (data) {
     this.data.setItem("msg", msg);
 };
 
-Store.prototype.getData = function (key) {
+Store.prototype.getData = function () {
     "use strict";
 
-    if (!key) {
-        key = "msg";
-    }
-
-    return this.data.getItem(key);
+    return this.data.getItem("msg");
 };
 
 Store.prototype.clearStore = function () {
@@ -43,5 +41,3 @@ Store.prototype.clearStore = function () {
 
     this.data.setItem("msg", "{}");
 };
-
-var store = new Store();
