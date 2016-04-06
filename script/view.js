@@ -21,3 +21,9 @@ View.prototype.addMessage = function (senderName, text) {
 
     div.append("<p>" + text + "</p>");
 };
+
+View.prototype.clearTextArea = function (textarea) {
+    "use strict";
+
+    textarea.val("");
+};

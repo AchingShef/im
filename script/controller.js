@@ -71,7 +71,7 @@ Controller.prototype.sendMessage = function (sender) {
         textarea = doc.find("#message");
         msg = textarea.val();
 
-        textarea.val("");
+        APP.view.clearTextArea(textarea);
 
         data = {
             alias: alias,
