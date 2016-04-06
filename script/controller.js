@@ -5,7 +5,7 @@ function Controller() {
 
     function onKeyPress(e, iframe, textarea) {
         if (e.keyCode === 13) {
-        // Если не нажат shift, то просто перенос
+            // Если не нажат shift, то просто перенос
 
             if (e.shiftKey === false && textarea.val().length > 0) {
                 scope.sendMessage(iframe);
@@ -41,7 +41,7 @@ function Controller() {
             scope.sendMessage(iframe);
         });
 
-    // Enter на поле сообщения
+        // Enter на поле сообщения
 
         textarea.on("keypress", function (e) {
             onKeyPress(e, iframe, textarea);
@@ -151,7 +151,7 @@ Controller.prototype.generateMessage = function (msg) {
 
                 oldSubStr = oldSubStr.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
-                //  Создаем регулярное выражение, чтобы заменить все значения в строке
+                // Создаем регулярное выражение, чтобы заменить все значения в строке
 
                 oldSubStr = new RegExp(oldSubStr, "g");
                 msg = msg.replace(oldSubStr, newSubStr);
