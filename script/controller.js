@@ -32,8 +32,6 @@ function Controller() {
 
                 text = data.alias + ": " + scope.generateMessage(data.msg);
 
-            debugger;
-
             APP.view.addMessage(iframe.name, text);
         });
 
